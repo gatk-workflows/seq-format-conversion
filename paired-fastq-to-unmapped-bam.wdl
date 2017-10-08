@@ -24,6 +24,36 @@
 ## page at https://hub.docker.com/r/broadinstitute/genomes-in-the-cloud/ for detailed
 ## licensing information pertaining to the included programs.
 
+# WORKFLOW DEFINITION
+workflow ConvertPairedFastQsToUnmappedBamWf {
+  Array[String] readgroup_list
+  Map[String, Array[File]] fastq_pairs
+  Map[String, Array[String]] metadata
+
+  # Convert multiple pairs of input fastqs in parallel
+  scatter (readgroup in readgroup_list) {
+
+    # Convert pair of FASTQs to uBAM
+    call PairedFastQsToUnmappedBAM {
+      input:
+        fastq_1 = fastq_pairs[readgroup][0],
+        fastq_2 = fastq_pairs[readgroup][1],
+        readgroup_name = readgroup,
+        sample_name = metadata[readgroup][0],
+        library_name = metadata[readgroup][1],
+        platform_unit = metadata[readgroup][2],
+        run_date = metadata[readgroup][3],
+        platform_name = metadata[readgroup][4],
+        sequencing_center = metadata[readgroup][5]
+    }
+  }
+
+  # Outputs that will be retained when execution is complete
+  output {
+    Array[File] output_bams = PairedFastQsToUnmappedBAM.output_bam
+  }
+}
+
 # TASK DEFINITIONS
 
 # Convert a pair of FASTQs to uBAM
@@ -61,37 +91,7 @@ task PairedFastQsToUnmappedBAM {
     disks: "local-disk " + disk_size + " HDD"
   }
   output {
-    File output_bam = "${readgroup_name}.bam"
-  }
-}
-
-# WORKFLOW DEFINITION
-workflow ConvertPairedFastQsToUnmappedBamWf {
-  Array[String] readgroup_list
-  Map[String, Array[File]] fastq_pairs
-  Map[String, Array[String]] metadata
-
-  # Convert multiple pairs of input fastqs in parallel
-  scatter (readgroup in readgroup_list) {
-
-    # Convert pair of FASTQs to uBAM
-    call PairedFastQsToUnmappedBAM {
-      input:
-        fastq_1 = fastq_pairs[readgroup][0],
-        fastq_2 = fastq_pairs[readgroup][1],
-        readgroup_name = readgroup,
-        sample_name = metadata[readgroup][0],
-        library_name = metadata[readgroup][1],
-        platform_unit = metadata[readgroup][2],
-        run_date = metadata[readgroup][3],
-        platform_name = metadata[readgroup][4],
-        sequencing_center = metadata[readgroup][5]
-    }
-  }
-
-  # Outputs that will be retained when execution is complete
-  output {
-    Array[File] output_bams = PairedFastQsToUnmappedBAM.output_bam
+    File output_bam = "${readgroup_name}.unmapped.bam"
   }
 }
 
