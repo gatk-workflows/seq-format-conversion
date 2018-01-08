@@ -75,7 +75,7 @@ task PairedFastQsToUnmappedBAM {
       FastqToSam \
       FASTQ=${fastq_1} \
       FASTQ2=${fastq_2} \
-      OUTPUT=${readgroup_name}.bam \
+      OUTPUT=${readgroup_name}.unmapped.bam \
       READ_GROUP_NAME=${readgroup_name} \
       SAMPLE_NAME=${sample_name} \
       LIBRARY_NAME=${library_name} \
