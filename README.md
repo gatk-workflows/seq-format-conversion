@@ -34,8 +34,6 @@ This WDL converts paired FASTQ to uBAM and adds read group information
 
 
 ### Software version requirements :
-- GATK 4 or later 
-
 Cromwell version support 
 - Successfully tested on v30.2
 - Does not work on versions < v23 due to output syntax
