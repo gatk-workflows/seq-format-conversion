@@ -1,4 +1,5 @@
 {
+  "##_Comment1": "Inputs",
   "ConvertPairedFastQsToUnmappedBamWf.readgroup_list": [
   	"NA12878_A", "NA12878_B", "NA12878_C"
   ],
@@ -27,6 +28,13 @@
   		"gs://gatk-test-data/wgs_fastq/NA12878_20k/H06JUADXX130110.1.ATCACGAT.20k_reads_2.fastq"
   	]
   },
+
+  "##_Comment2": "GATK Luanch Path",
+  "ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.gatk_path": "/gatk/gatk",
+  
+  "##_Comment3": "Runtime Parameters",
+  "ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.docker": "broadinstitute/gatk:4.0.1.2",
   "ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.mem_size": "1 GB",
   "ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.disk_size": 200
 }
+

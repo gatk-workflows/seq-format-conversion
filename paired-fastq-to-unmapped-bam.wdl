@@ -69,23 +69,25 @@ task PairedFastQsToUnmappedBAM {
   String sequencing_center
   Int disk_size
   String mem_size
+  String docker
+  String gatk_path
 
   command {
-    java -Xmx3000m -jar /usr/gitc/picard.jar \
+    ${gatk_path} --java-options "-Xmx3000m" \
       FastqToSam \
-      FASTQ=${fastq_1} \
-      FASTQ2=${fastq_2} \
-      OUTPUT=${readgroup_name}.bam \
-      READ_GROUP_NAME=${readgroup_name} \
-      SAMPLE_NAME=${sample_name} \
-      LIBRARY_NAME=${library_name} \
-      PLATFORM_UNIT=${platform_unit} \
-      RUN_DATE=${run_date} \
-      PLATFORM=${platform_name} \
-      SEQUENCING_CENTER=${sequencing_center} 
+      --FASTQ ${fastq_1} \
+      --FASTQ2 ${fastq_2} \
+      --OUTPUT ${readgroup_name}.unmapped.bam \
+      --READ_GROUP_NAME ${readgroup_name} \
+      --SAMPLE_NAME ${sample_name} \
+      --LIBRARY_NAME ${library_name} \
+      --PLATFORM_UNIT ${platform_unit} \
+      --RUN_DATE ${run_date} \
+      --PLATFORM ${platform_name} \
+      --SEQUENCING_CENTER ${sequencing_center} 
   }
   runtime {
-    docker: "broadinstitute/genomes-in-the-cloud:2.2.4-1469632282"
+    docker: docker
     memory: mem_size
     cpu: "1"
     disks: "local-disk " + disk_size + " HDD"
