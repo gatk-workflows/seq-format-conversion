@@ -1,11 +1,6 @@
 # seq-format-conversion
 Workflows for converting between sequence data formats
 
-# gatk4-germline-snps-indels
-
-### Purpose : 
-Workflows for germline short variant discovery with GATK4. 
-
 ### cram-to-bam :
 This script should convert a CRAM to SAM to BAM and output a BAM, BAM Index, 
 and validation report to a Google bucket. If you'd like to do this on multiple CRAMS, 
