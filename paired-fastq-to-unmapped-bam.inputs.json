@@ -2,6 +2,7 @@
   "##_Comment1": "Inputs",
   "ConvertPairedFastQsToUnmappedBamWf.readgroup_list": "gs://gatk-test-data/paired-fastq-to-unmapped-bam/NA12878_20k.list",
 
+
   "##_Comment2": "GATK Luanch Path",
   "ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.gatk_path": "/gatk/gatk",
   
@@ -19,4 +20,3 @@
   "##_Comment3": "Preemptibles",
   "##_ConvertPairedFastQsToUnmappedBamWf.preemptible_attempts": "(optional) Int?"
 }
-
