@@ -4,13 +4,16 @@
 ##
 ## Requirements/expectations :
 ## - Pair-end sequencing data in FASTQ format (one file per orientation)
-## - One or more read groups, one per pair of FASTQ files 
+## - One or more read groups, one per pair of FASTQ files  
+## - A readgroup.list file with the following format :  
+##   ``readgroup   fastq_pair1   fastq_pair2   sample_name   library_name   platform_unit   run_date   platform_name   sequecing_center``
 ##
 ## Outputs :
 ## - Set of unmapped BAMs, one per read group
+## - File of a list of the generated unmapped BAMs
 ##
 ## Cromwell version support 
-## - Successfully tested on v24
+## - Successfully tested on v30.2
 ## - Does not work on versions < v23 due to output syntax
 ##
 ## Runtime parameters are optimized for Broad's Google Cloud Platform implementation. 
@@ -26,31 +29,46 @@
 
 # WORKFLOW DEFINITION
 workflow ConvertPairedFastQsToUnmappedBamWf {
-  Array[String] readgroup_list
-  Map[String, Array[File]] fastq_pairs
-  Map[String, Array[String]] metadata
+  File sample_list  
+  Array[Array[String]] samples_data = read_tsv(sample_list) 
+  String ubam_list_name = basename(sample_list,".list")
+  
+  String docker
+  Int? preemptible_attempts
 
   # Convert multiple pairs of input fastqs in parallel
-  scatter (readgroup in readgroup_list) {
+  scatter (i in range(length(samples_data))) {
 
     # Convert pair of FASTQs to uBAM
     call PairedFastQsToUnmappedBAM {
       input:
-        fastq_1 = fastq_pairs[readgroup][0],
-        fastq_2 = fastq_pairs[readgroup][1],
-        readgroup_name = readgroup,
-        sample_name = metadata[readgroup][0],
-        library_name = metadata[readgroup][1],
-        platform_unit = metadata[readgroup][2],
-        run_date = metadata[readgroup][3],
-        platform_name = metadata[readgroup][4],
-        sequencing_center = metadata[readgroup][5]
+        fastq_1 = samples_data[i][1],
+        fastq_2 = samples_data[i][2],
+        readgroup_name = samples_data[i][0],
+        sample_name = samples_data[i][3],
+        library_name = samples_data[i][4],
+        platform_unit = samples_data[i][5],
+        run_date = samples_data[i][6],
+        platform_name = samples_data[i][7],
+        sequencing_center = samples_data[i][8],
+        docker = docker,
+        preemptible_attempts = preemptible_attempts
     }
-  }
+   }
+
+    #Create a list with the generated ubams
+    call CreateUbamList {
+      input:
+        unmapped_bams = PairedFastQsToUnmappedBAM.output_bam,
+        ubam_list_name = ubam_list_name,
+	    docker = docker,
+        preemptible_attempts = preemptible_attempts
+    }
 
   # Outputs that will be retained when execution is complete
   output {
     Array[File] output_bams = PairedFastQsToUnmappedBAM.output_bam
+    File unmapped_bam_list = CreateUbamList.unmapped_bam_list
   }
 }
 
@@ -67,8 +85,10 @@ task PairedFastQsToUnmappedBAM {
   String run_date
   String platform_name
   String sequencing_center
-  Int disk_size
-  String mem_size
+  
+  Int? disk_space_gb
+  Int? machine_mem_gb
+  Int? preemptible_attempts
   String docker
   String gatk_path
 
@@ -88,12 +108,38 @@ task PairedFastQsToUnmappedBAM {
   }
   runtime {
     docker: docker
-    memory: mem_size
+    memory: select_first([machine_mem_gb,10]) + " GB"
     cpu: "1"
-    disks: "local-disk " + disk_size + " HDD"
+    disks: "local-disk " + select_first([disk_space_gb, 100]) + " HDD"
+    preemptible: select_first([preemptible_attempts, 3])
   }
   output {
     File output_bam = "${readgroup_name}.unmapped.bam"
+  }
+}
+
+task CreateUbamList {
+  Array[String] unmapped_bams
+  String ubam_list_name
+  
+  Int? machine_mem_gb
+  Int? disk_space_gb
+  Int? preemptible_attempts
+  String docker
+  
+  command {
+    echo "${sep=',' unmapped_bams}" | sed s/"\""//g | sed s/"\["//g | sed s/\]//g | sed s/" "//g | sed 's/,/\n/g' >> ${ubam_list_name}.unmapped_bams.list
+
+  }
+  output {
+	File unmapped_bam_list = "${ubam_list_name}.unmapped_bams.list"
+  }
+  runtime {
+    docker: docker
+    memory: select_first([machine_mem_gb,5]) + " GB"
+    cpu: "1"
+    disks: "local-disk " + select_first([disk_space_gb, 10]) + " HDD"
+    preemptible: select_first([preemptible_attempts, 3])
   }
 }
 
