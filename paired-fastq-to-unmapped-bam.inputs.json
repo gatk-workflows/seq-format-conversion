@@ -1,16 +1,22 @@
 {
   "##_Comment1": "Inputs",
-  "ConvertPairedFastQsToUnmappedBamWf.sample_list": "gs://gatk-test-data/paired-fastq-to-unmapped-bam/NA12878_20k.list",
+  "ConvertPairedFastQsToUnmappedBamWf.readgroup_list": "gs://gatk-test-data/paired-fastq-to-unmapped-bam/NA12878_20k.list",
 
   "##_Comment2": "GATK Luanch Path",
   "ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.gatk_path": "/gatk/gatk",
   
-  "##_Comment3": "Runtime Parameters",
+  "##_Comment3": "Docker",
   "ConvertPairedFastQsToUnmappedBamWf.docker": "broadinstitute/gatk:4.0.2.0",
+
+  "##_Comment3": "Disk Space",
   "##_ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.disk_space_gb": "(optional) Int?",
   "##_ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.machine_mem_gb": "(optional) Int?",
+
+  "##_Comment3": "Memory",
   "##_ConvertPairedFastQsToUnmappedBamWf.CreateUbamList.disk_space_gb": "(optional) Int?",
   "##_ConvertPairedFastQsToUnmappedBamWf.CreateUbamList.machine_mem_gb": "(optional) Int?",
+
+  "##_Comment3": "Preemptibles",
   "##_ConvertPairedFastQsToUnmappedBamWf.preemptible_attempts": "(optional) Int?"
 }
 

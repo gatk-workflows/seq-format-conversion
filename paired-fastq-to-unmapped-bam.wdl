@@ -29,28 +29,28 @@
 
 # WORKFLOW DEFINITION
 workflow ConvertPairedFastQsToUnmappedBamWf {
-  File sample_list  
-  Array[Array[String]] samples_data = read_tsv(sample_list) 
-  String ubam_list_name = basename(sample_list,".list")
+  File readgroup_list  
+  Array[Array[String]] readgroup_array = read_tsv(readgroup_list) 
+  String ubam_list_name = basename(readgroup_list,".list")
   
   String docker
   Int? preemptible_attempts
 
   # Convert multiple pairs of input fastqs in parallel
-  scatter (i in range(length(samples_data))) {
+  scatter (i in range(length(readgroup_array))) {
 
     # Convert pair of FASTQs to uBAM
     call PairedFastQsToUnmappedBAM {
       input:
-        fastq_1 = samples_data[i][1],
-        fastq_2 = samples_data[i][2],
-        readgroup_name = samples_data[i][0],
-        sample_name = samples_data[i][3],
-        library_name = samples_data[i][4],
-        platform_unit = samples_data[i][5],
-        run_date = samples_data[i][6],
-        platform_name = samples_data[i][7],
-        sequencing_center = samples_data[i][8],
+        fastq_1 = readgroup_array[i][1],
+        fastq_2 = readgroup_array[i][2],
+        readgroup_name = readgroup_array[i][0],
+        sample_name = readgroup_array[i][3],
+        library_name = readgroup_array[i][4],
+        platform_unit = readgroup_array[i][5],
+        run_date = readgroup_array[i][6],
+        platform_name = readgroup_array[i][7],
+        sequencing_center = readgroup_array[i][8],
         docker = docker,
         preemptible_attempts = preemptible_attempts
     }
