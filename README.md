@@ -24,7 +24,7 @@ This WDL converts paired FASTQ to uBAM and adds read group information
 - Pair-end sequencing data in FASTQ format (one file per orientation)
 - One or more read groups, one per pair of FASTQ files 
 - The wdl will accept a file containing a list of the readgroups along with their metadata as the input. The wdl expects a specifi format for the colomuns, please follow the format as provided :  
-   ``readgroup   fastq_pair1_file_path   fastq_pair2_file_path   sample_name   library_name   platform_unit   run_date   platform_name   sequecing_center``
+   ```readgroup   fastq_pair1_file_path   fastq_pair2_file_path   sample_name   library_name   platform_unit   run_date   platform_name   sequecing_center```  
 
 #### Outputs 
 - Set of unmapped BAMs, one per read group
