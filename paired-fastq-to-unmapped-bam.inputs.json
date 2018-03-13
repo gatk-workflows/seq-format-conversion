@@ -10,11 +10,11 @@
 
   "##_Comment3": "Disk Space",
   "##_ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.disk_space_gb": "(optional) Int?",
-  "##_ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.machine_mem_gb": "(optional) Int?",
+  "##_ConvertPairedFastQsToUnmappedBamWf.CreateUbamList.disk_space_gb": "(optional) Int?",
 
   "##_Comment3": "Memory",
-  "##_ConvertPairedFastQsToUnmappedBamWf.CreateUbamList.disk_space_gb": "(optional) Int?",
   "##_ConvertPairedFastQsToUnmappedBamWf.CreateUbamList.machine_mem_gb": "(optional) Int?",
+  "##_ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.machine_mem_gb": "(optional) Int?",
 
   "##_Comment3": "Preemptibles",
   "##_ConvertPairedFastQsToUnmappedBamWf.preemptible_attempts": "(optional) Int?"
