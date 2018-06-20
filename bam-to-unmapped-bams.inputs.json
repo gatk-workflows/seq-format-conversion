@@ -1,0 +1,6 @@
+
+{
+  "##_COMMENT1": "INPUTS",  
+  "BamToUnmappedBams.input_bam": "gs://gatk-test-data/wgs_bam/NA12878_20k_hg38/NA12878.bam"
+}
+
