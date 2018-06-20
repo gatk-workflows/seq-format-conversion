@@ -7,14 +7,12 @@
   "ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.gatk_path": "/gatk/gatk",
   
   "##_Comment3": "Docker",
-  "ConvertPairedFastQsToUnmappedBamWf.docker": "broadinstitute/gatk:4.0.2.0",
+  "ConvertPairedFastQsToUnmappedBamWf.docker": "broadinstitute/gatk:4.0.4.0",
 
   "##_Comment3": "Disk Space",
   "##_ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.disk_space_gb": "(optional) Int?",
-  "##_ConvertPairedFastQsToUnmappedBamWf.CreateUbamList.disk_space_gb": "(optional) Int?",
 
   "##_Comment3": "Memory",
-  "##_ConvertPairedFastQsToUnmappedBamWf.CreateUbamList.machine_mem_gb": "(optional) Int?",
   "##_ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.machine_mem_gb": "(optional) Int?",
 
   "##_Comment3": "Preemptibles",
