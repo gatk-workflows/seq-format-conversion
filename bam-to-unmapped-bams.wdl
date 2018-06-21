@@ -38,7 +38,7 @@ workflow BamToUnmappedBams {
   String? gitc_docker
   String gitc_image = select_first([gitc_docker, "broadinstitute/genomes-in-the-cloud:2.3.1-1512499786"])
   String? gatk_docker 
-  String gatk_image = select_first([gatk_docker, "broadinstitute/gatk:4.0.4.0"])
+  String gatk_image = select_first([gatk_docker, "broadinstitute/gatk:latest"])
 
   call GenerateOutputMap {
     input:
