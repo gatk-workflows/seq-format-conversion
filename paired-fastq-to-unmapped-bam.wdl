@@ -29,29 +29,39 @@
 
 # WORKFLOW DEFINITION
 workflow ConvertPairedFastQsToUnmappedBamWf {
-  File readgroup_list  
-  Array[Array[String]] readgroup_array = read_tsv(readgroup_list) 
-  String ubam_list_name = basename(readgroup_list,".list") + "unmapped.bam.list"
-  
-  String docker
+
+  Array[String] sample_name 
+  Array[String] fastq_1 
+  Array[String] fastq_2 
+  Array[String] readgroup_name 
+  Array[String] library_name 
+  Array[String] platform_unit 
+  Array[String] run_date 
+  Array[String] platform_name 
+  Array[String] sequencing_center 
+
+  String ubam_list_name
+
+  String? gatk_docker
+  String gatk_image = select_first([gatk_docker, "broadinstitute/gatk:latest"])
   Int? preemptible_attempts
 
   # Convert multiple pairs of input fastqs in parallel
-  scatter (i in range(length(readgroup_array))) {
+  scatter (i in range(length(readgroup_name))) {
 
     # Convert pair of FASTQs to uBAM
     call PairedFastQsToUnmappedBAM {
       input:
-      fastq_1 = readgroup_array[i][1],
-      fastq_2 = readgroup_array[i][2],
-      readgroup_name = readgroup_array[i][0],
-      sample_name = readgroup_array[i][3],
-      library_name = readgroup_array[i][4],
-      platform_unit = readgroup_array[i][5],
-      run_date = readgroup_array[i][6],
-      platform_name = readgroup_array[i][7],
-      sequencing_center = readgroup_array[i][8],
-      docker = docker,
+      sample_name = sample_name[i],
+      fastq_1 = fastq_1[i],
+      fastq_2 = fastq_2[i],
+      readgroup_name = readgroup_name[i],
+      library_name = library_name[i],
+      platform_unit = platform_unit[i],
+      run_date = run_date[i],
+      platform_name = platform_name[i],
+      sequencing_center = sequencing_center[i],
+      docker = gatk_image,
       preemptible_attempts = preemptible_attempts
     }
   }
@@ -61,7 +71,7 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
     input:
     array_of_files = PairedFastQsToUnmappedBAM.output_bam,
     fofn_name = ubam_list_name,
-    docker = docker
+    docker = gatk_image
   }
 
   # Outputs that will be retained when execution is complete
@@ -75,10 +85,10 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
 
 # Convert a pair of FASTQs to uBAM
 task PairedFastQsToUnmappedBAM {
+  String sample_name
   File fastq_1
   File fastq_2
   String readgroup_name
-  String sample_name
   String library_name
   String platform_unit
   String run_date
