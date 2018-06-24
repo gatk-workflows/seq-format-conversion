@@ -4,9 +4,8 @@
 ##
 ## Requirements/expectations :
 ## - Pair-end sequencing data in FASTQ format (one file per orientation)
-## - One or more read groups, one per pair of FASTQ files  
-## - A readgroup.list file with the following format :  
-##   ``readgroup   fastq_pair1   fastq_pair2   sample_name   library_name   platform_unit   run_date   platform_name   sequecing_center``
+## - The following metada descriptors per sample:
+## ```readgroup   fastq_pair1_file_path   fastq_pair2_file_path   sample_name   library_name   platform_unit   run_date   platform_name   sequecing_center``` 
 ##
 ## Outputs :
 ## - Set of unmapped BAMs, one per read group
