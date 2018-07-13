@@ -1,40 +1,30 @@
 {
   "##_Comment1": "Inputs",
-  "ConvertPairedFastQsToUnmappedBamWf.readgroup_list": [
-  	"NA12878_A", "NA12878_B", "NA12878_C"
-  ],
-  "ConvertPairedFastQsToUnmappedBamWf.metadata": {
-    "NA12878_A": [
-      "NA12878", "Solexa-NA12878", "H06HDADXX130110.2.ATCACGAT", "2016-09-01T02:00:00+0200", "illumina", "BI"
-    ],
-  	"NA12878_B": [
-  		"NA12878", "Solexa-NA12878", "H06HDADXX130110.1.ATCACGAT", "2016-09-01T02:00:00+0200", "illumina", "BI"
-  	],
-  	"NA12878_C": [
-  		"NA12878", "Solexa-NA12878", "H06JUADXX130110.1.ATCACGAT", "2016-09-01T02:00:00+0200", "illumina", "BI"
-  	]
-  }, 		
-  "ConvertPairedFastQsToUnmappedBamWf.fastq_pairs": {
-  	"NA12878_A": [
-  		"gs://gatk-test-data/wgs_fastq/NA12878_20k/H06HDADXX130110.1.ATCACGAT.20k_reads_1.fastq", 
-  		"gs://gatk-test-data/wgs_fastq/NA12878_20k/H06HDADXX130110.1.ATCACGAT.20k_reads_2.fastq"
-  	],
-  	"NA12878_B": [
-  		"gs://gatk-test-data/wgs_fastq/NA12878_20k/H06HDADXX130110.2.ATCACGAT.20k_reads_1.fastq", 
-  		"gs://gatk-test-data/wgs_fastq/NA12878_20k/H06HDADXX130110.2.ATCACGAT.20k_reads_2.fastq"
-  	], 
-  	"NA12878_C": [
-		"gs://gatk-test-data/wgs_fastq/NA12878_20k/H06JUADXX130110.1.ATCACGAT.20k_reads_1.fastq", 
-  		"gs://gatk-test-data/wgs_fastq/NA12878_20k/H06JUADXX130110.1.ATCACGAT.20k_reads_2.fastq"
-  	]
-  },
+  "ConvertPairedFastQsToUnmappedBamWf.readgroup_name": ["NA12878_A", "NA12878_B", "NA12878_C"],
+  "ConvertPairedFastQsToUnmappedBamWf.sample_name": ["NA12878", "NA12878", "NA12878"],
+  "ConvertPairedFastQsToUnmappedBamWf.fastq_1": ["gs://gatk-test-data/wgs_fastq/NA12878_20k/H06HDADXX130110.1.ATCACGAT.20k_reads_1.fastq", "gs://gatk-test-data/wgs_fastq/NA12878_20k/H06HDADXX130110.2.ATCACGAT.20k_reads_1.fastq", "gs://gatk-test-data/wgs_fastq/NA12878_20k/H06JUADXX130110.1.ATCACGAT.20k_reads_1.fastq"],
+  "ConvertPairedFastQsToUnmappedBamWf.fastq_2": ["gs://gatk-test-data/wgs_fastq/NA12878_20k/H06HDADXX130110.1.ATCACGAT.20k_reads_2.fastq", "gs://gatk-test-data/wgs_fastq/NA12878_20k/H06HDADXX130110.2.ATCACGAT.20k_reads_2.fastq", "gs://gatk-test-data/wgs_fastq/NA12878_20k/H06JUADXX130110.1.ATCACGAT.20k_reads_2.fastq"],
+  "ConvertPairedFastQsToUnmappedBamWf.library_name": ["Solexa-NA12878", "Solexa-NA12878","Solexa-NA12878"],
+  "ConvertPairedFastQsToUnmappedBamWf.platform_unit": ["H06HDADXX130110.2.ATCACGAT", "H06HDADXX130110.1.ATCACGAT", "H06JUADXX130110.1.ATCACGAT"],
+  "ConvertPairedFastQsToUnmappedBamWf.run_date": ["2016-09-01T02:00:00+0200", "2016-09-01T02:00:00+0200", "2016-09-01T02:00:00+0200"],
+  "ConvertPairedFastQsToUnmappedBamWf.platform_name": ["illumina","illumina","illumina"],
+  "ConvertPairedFastQsToUnmappedBamWf.sequencing_center": ["BI","BI","BI"],
 
-  "##_Comment2": "GATK Luanch Path",
-  "ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.gatk_path": "/gatk/gatk",
+  "##_Comment2": "Output ubam list",
+  "ConvertPairedFastQsToUnmappedBamWf.ubam_list_name": "NA12878_unmapped_bam",
+
+  "##_Comment3": "GATK Luanch Path",
+  "#ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.gatk_path_override": "(optional) String?",
   
-  "##_Comment3": "Runtime Parameters",
-  "ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.docker": "broadinstitute/gatk:4.0.1.2",
-  "ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.mem_size": "1 GB",
-  "ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.disk_size": 200
-}
+  "##_Comment4": "Docker",
+  "#ConvertPairedFastQsToUnmappedBamWf.gatk_docker_override": "(optional) String?",
 
+  "##_Comment5": "Disk Space",
+  "#ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.disk_space_gb": "(optional) Int?",
+
+  "##_Comment6": "Memory",
+  "#ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.machine_mem_gb": "(optional) Int?",
+
+  "##_Comment7": "Preemptibles",
+  "#ConvertPairedFastQsToUnmappedBamWf.preemptible_attempts": "(optional) Int?"
+}

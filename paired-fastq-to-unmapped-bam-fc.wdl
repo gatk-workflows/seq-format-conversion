@@ -1,11 +1,12 @@
-##Copyright Broad Institute, 2018
+## Copyright Broad Institute, 2018
 ## 
 ## This WDL converts paired FASTQ to uBAM and adds read group information 
 ##
 ## Requirements/expectations :
 ## - Pair-end sequencing data in FASTQ format (one file per orientation)
-## - The following metada descriptors per sample:
-## ```readgroup   fastq_pair1_file_path   fastq_pair2_file_path   sample_name   library_name   platform_unit   run_date   platform_name   sequecing_center``` 
+## - One or more read groups, one per pair of FASTQ files  
+## - A readgroup.list file with the following format :  
+##   ``readgroup   fastq_pair1   fastq_pair2   sample_name   library_name   platform_unit   run_date   platform_name   sequecing_center``
 ##
 ## Outputs :
 ## - Set of unmapped BAMs, one per read group
@@ -28,40 +29,31 @@
 
 # WORKFLOW DEFINITION
 workflow ConvertPairedFastQsToUnmappedBamWf {
-
-  Array[String] sample_name 
-  Array[String] fastq_1 
-  Array[String] fastq_2 
-  Array[String] readgroup_name 
-  Array[String] library_name 
-  Array[String] platform_unit 
-  Array[String] run_date 
-  Array[String] platform_name 
-  Array[String] sequencing_center 
-
-  String ubam_list_name
-
+  File readgroup_list  
+  Array[Array[String]] readgroup_array = read_tsv(readgroup_list) 
+  String ubam_list_name = basename(readgroup_list,".list") + "unmapped.bam.list"
+  
   String? gatk_docker_override
-  String gatk_docker = select_first([gatk_docker_override, "broadinstitute/gatk:latest"])
+  String gatk_docker = select_first([gatk_docker_override, "us.gcr.io/broad-gatk/gatk:latest"])
   String? gatk_path_override
   String gatk_path = select_first([gatk_path_override, "/gatk/gatk"])
   Int? preemptible_attempts
 
   # Convert multiple pairs of input fastqs in parallel
-  scatter (i in range(length(readgroup_name))) {
+  scatter (i in range(length(readgroup_array))) {
 
     # Convert pair of FASTQs to uBAM
     call PairedFastQsToUnmappedBAM {
       input:
-        sample_name = sample_name[i],
-        fastq_1 = fastq_1[i],
-        fastq_2 = fastq_2[i],
-        readgroup_name = readgroup_name[i],
-        library_name = library_name[i],
-        platform_unit = platform_unit[i],
-        run_date = run_date[i],
-        platform_name = platform_name[i],
-        sequencing_center = sequencing_center[i],
+        fastq_1 = readgroup_array[i][1],
+        fastq_2 = readgroup_array[i][2],
+        readgroup_name = readgroup_array[i][0],
+        sample_name = readgroup_array[i][3],
+        library_name = readgroup_array[i][4],
+        platform_unit = readgroup_array[i][5],
+        run_date = readgroup_array[i][6],
+        platform_name = readgroup_array[i][7],
+        sequencing_center = readgroup_array[i][8],
         gatk_path = gatk_path,
         docker = gatk_docker,
         preemptible_attempts = preemptible_attempts
