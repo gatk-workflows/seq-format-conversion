@@ -14,10 +14,10 @@
   "ConvertPairedFastQsToUnmappedBamWf.ubam_list_name": "NA12878_unmapped_bam",
 
   "##_Comment3": "GATK Luanch Path",
-  "#ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.gatk_path_override": "",
+  "#ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.gatk_path_override": "(optional) String?",
   
   "##_Comment4": "Docker",
-  "#ConvertPairedFastQsToUnmappedBamWf.gatk_docker_override": "",
+  "#ConvertPairedFastQsToUnmappedBamWf.gatk_docker_override": "(optional) String?",
 
   "##_Comment5": "Disk Space",
   "#ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM.disk_space_gb": "(optional) Int?",

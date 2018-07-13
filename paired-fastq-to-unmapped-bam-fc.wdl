@@ -34,7 +34,7 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
   String ubam_list_name = basename(readgroup_list,".list") + "unmapped.bam.list"
   
   String? gatk_docker_override
-  String gatk_docker = select_first([gatk_docker_override, "broadinstitute/gatk:latest"])
+  String gatk_docker = select_first([gatk_docker_override, "us.gcr.io/broad-gatk/gatk:latest"])
   String? gatk_path_override
   String gatk_path = select_first([gatk_path_override, "/gatk/gatk"])
   Int? preemptible_attempts
@@ -45,27 +45,27 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
     # Convert pair of FASTQs to uBAM
     call PairedFastQsToUnmappedBAM {
       input:
-      fastq_1 = readgroup_array[i][1],
-      fastq_2 = readgroup_array[i][2],
-      readgroup_name = readgroup_array[i][0],
-      sample_name = readgroup_array[i][3],
-      library_name = readgroup_array[i][4],
-      platform_unit = readgroup_array[i][5],
-      run_date = readgroup_array[i][6],
-      platform_name = readgroup_array[i][7],
-      sequencing_center = readgroup_array[i][8],
-      gatk_path = gatk_path,
-      docker = gatk_docker,
-      preemptible_attempts = preemptible_attempts
+        fastq_1 = readgroup_array[i][1],
+        fastq_2 = readgroup_array[i][2],
+        readgroup_name = readgroup_array[i][0],
+        sample_name = readgroup_array[i][3],
+        library_name = readgroup_array[i][4],
+        platform_unit = readgroup_array[i][5],
+        run_date = readgroup_array[i][6],
+        platform_name = readgroup_array[i][7],
+        sequencing_center = readgroup_array[i][8],
+        gatk_path = gatk_path,
+        docker = gatk_docker,
+        preemptible_attempts = preemptible_attempts
     }
   }
 
-    #Create a file with a list of the generated ubams
+  #Create a file with a list of the generated ubams
   call CreateFoFN {
     input:
-    array_of_files = PairedFastQsToUnmappedBAM.output_bam,
-    fofn_name = ubam_list_name,
-    docker = gatk_docker
+      array_of_files = PairedFastQsToUnmappedBAM.output_bam,
+      fofn_name = ubam_list_name,
+      docker = gatk_docker
   }
 
   # Outputs that will be retained when execution is complete
@@ -113,7 +113,7 @@ task PairedFastQsToUnmappedBAM {
   }
   runtime {
     docker: docker
-    memory: select_first([machine_mem_gb,10]) + " GB"
+    memory: select_first([machine_mem_gb, 10]) + " GB"
     cpu: "1"
     disks: "local-disk " + select_first([disk_space_gb, 100]) + " HDD"
     preemptible: select_first([preemptible_attempts, 3])
@@ -135,7 +135,7 @@ task CreateFoFN {
     mv ${write_lines(array_of_files)}  ${fofn_name}.list
   }
   output {
-	  File fofn_list = "${fofn_name}.list"
+    File fofn_list = "${fofn_name}.list"
   }
   runtime {
     docker: docker

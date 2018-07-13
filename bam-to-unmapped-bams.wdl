@@ -1,4 +1,4 @@
-## Copyright Broad Institute, 2017
+## Copyright Broad Institute, 2018
 ## 
 ## This WDL converts BAM  to unmapped BAMs
 ##
@@ -9,7 +9,7 @@
 ## - Sorted Unmapped BAMs
 ##
 ## Cromwell version support
-## - Successfully tested on v31
+## - Successfully tested on v33
 ## - Does not work on versions < v23 due to output syntax
 ##
 ## Runtime parameters are optimized for Broad's Google Cloud Platform implementation. 

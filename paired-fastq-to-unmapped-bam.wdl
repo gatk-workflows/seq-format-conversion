@@ -53,27 +53,27 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
     # Convert pair of FASTQs to uBAM
     call PairedFastQsToUnmappedBAM {
       input:
-      sample_name = sample_name[i],
-      fastq_1 = fastq_1[i],
-      fastq_2 = fastq_2[i],
-      readgroup_name = readgroup_name[i],
-      library_name = library_name[i],
-      platform_unit = platform_unit[i],
-      run_date = run_date[i],
-      platform_name = platform_name[i],
-      sequencing_center = sequencing_center[i],
-      gatk_path = gatk_path,
-      docker = gatk_docker,
-      preemptible_attempts = preemptible_attempts
+        sample_name = sample_name[i],
+        fastq_1 = fastq_1[i],
+        fastq_2 = fastq_2[i],
+        readgroup_name = readgroup_name[i],
+        library_name = library_name[i],
+        platform_unit = platform_unit[i],
+        run_date = run_date[i],
+        platform_name = platform_name[i],
+        sequencing_center = sequencing_center[i],
+        gatk_path = gatk_path,
+        docker = gatk_docker,
+        preemptible_attempts = preemptible_attempts
     }
   }
 
-    #Create a file with a list of the generated ubams
+  #Create a file with a list of the generated ubams
   call CreateFoFN {
     input:
-    array_of_files = PairedFastQsToUnmappedBAM.output_bam,
-    fofn_name = ubam_list_name,
-    docker = gatk_docker
+      array_of_files = PairedFastQsToUnmappedBAM.output_bam,
+      fofn_name = ubam_list_name,
+      docker = gatk_docker
   }
 
   # Outputs that will be retained when execution is complete
@@ -121,7 +121,7 @@ task PairedFastQsToUnmappedBAM {
   }
   runtime {
     docker: docker
-    memory: select_first([machine_mem_gb,10]) + " GB"
+    memory: select_first([machine_mem_gb, 10]) + " GB"
     cpu: "1"
     disks: "local-disk " + select_first([disk_space_gb, 100]) + " HDD"
     preemptible: select_first([preemptible_attempts, 3])
@@ -143,7 +143,7 @@ task CreateFoFN {
     mv ${write_lines(array_of_files)}  ${fofn_name}.list
   }
   output {
-	  File fofn_list = "${fofn_name}.list"
+    File fofn_list = "${fofn_name}.list"
   }
   runtime {
     docker: docker
