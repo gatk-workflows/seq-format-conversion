@@ -30,20 +30,25 @@ Int validate_sam_file_disk_size
 String cram_to_bam_mem_size
 String validate_sam_file_mem_size
 
+String? gotc_docker_override
+String gotc_docker = select_first([gotc_docker_override, "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817"])
+
 
 #converts CRAM to SAM to BAM and makes BAI
 call CramToBamTask{
 	input:
 	disk_size = cram_to_bam_disk_size,
-	mem_size = cram_to_bam_mem_size	
+	mem_size = cram_to_bam_mem_size,
+        docker_image = gotc_docker	
 }
 
 #validates Bam
 call ValidateSamFile{
 	input:
 	input_bam = CramToBamTask.outputBam,
-    disk_size = validate_sam_file_disk_size,
-    mem_size = validate_sam_file_mem_size	
+        disk_size = validate_sam_file_disk_size,
+        mem_size = validate_sam_file_mem_size,
+        docker_image = gotc_docker	
 }
 
 #Outputs Bam, Bai, and validation report to the FireCloud data model
