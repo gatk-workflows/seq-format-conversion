@@ -23,7 +23,7 @@ This WDL converts paired FASTQ to uBAM and adds read group information
 *NOTE: paired-fastq-to-unmapped-bam-fc.wdl is a slightly modified version of the original to support users interested running on FireCloud. 
 As input this wdl takes a TSV with each row being a different readgroup and each column in the row being descriptors*
 
-#### Requirements/expectations
+#### Requirements/expectations 
 - Pair-end sequencing data in FASTQ format (one file per orientation)
 - The following metada descriptors per sample: 
 ```
@@ -63,4 +63,3 @@ view the following tutorial [(How to) Execute Workflows from the gatk-workflows 
 ### LICENSING :
 Copyright Broad Institute, 2019 | BSD-3
 This script is released under the WDL open source code license (BSD-3) (full license text at https://github.com/openwdl/wdl/blob/master/LICENSE). Note however that the programs it calls may be subject to different licenses. Users are responsible for checking that they are authorized to run all programs before running this script.
-
