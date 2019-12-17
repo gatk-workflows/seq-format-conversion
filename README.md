@@ -23,10 +23,14 @@ This WDL converts paired FASTQ to uBAM and adds read group information
 #### Requirements/expectations 
 - Pair-end sequencing data in FASTQ format (one file per orientation)
 - The following metada descriptors per sample: 
-```
-readgroup   fastq_pair1_file_path   fastq_pair2_file_path   sample_name   library_name   platform_unit   run_date   platform_name   sequecing_center
-```  
-
+  - readgroup   
+  - sample_name
+  - library_name
+  - platform_unit
+  - run_date
+  - platform_name
+  - sequecing_center
+  
 #### Outputs 
 - Set of unmapped BAMs, one per read group
 - File containing a list of the generated unmapped BAMs 
@@ -39,9 +43,13 @@ This WDL converts BAM  to unmapped BAMs
 
 #### Outputs 
 - Sorted Unmapped BAMs
+- Text file listing the unmapped file paths (FOFN)
 
 ### interleaved-fastq-to-paired-fastq :
-This WDL takes in a single interleaved(R1+R2) FASTQ file and separates it into separate R1 and R2 FASTQ (i.e. paired FASTQ) files. Paired FASTQ files are the input format for the tool that generates unmapped BAMs (the format used in most GATK processing and analysis tools).
+This WDL takes in a single interleaved(R1+R2) FASTQ file and separates it into 
+separate R1 and R2 FASTQ (i.e. paired FASTQ) files. Paired FASTQ files are the input 
+format for the tool that generates unmapped BAMs (the format used in most 
+GATK processing and analysis tools).
 
 #### Requirements/expectations 
 - Interleaved Fastq file
