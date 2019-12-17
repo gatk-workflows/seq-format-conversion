@@ -1,3 +1,4 @@
+version 1.0
 ## Copyright Broad Institute, 2018
 ## 
 ## This WDL converts BAM  to unmapped BAMs
@@ -25,35 +26,21 @@
 
 # WORKFLOW DEFINITION
 workflow BamToUnmappedBams {
-  File input_bam
+  input {
+    File input_bam
 
-  Int? additional_disk_size
-  Int additional_disk = select_first([additional_disk_size, 20])
-
-  Float input_size = size(input_bam, "GB")
-  
-  String? gatk_path
-  String path2gatk = select_first([gatk_path, "/gatk/gatk"])
-
-  String? gitc_docker
-  String gitc_image = select_first([gitc_docker, "broadinstitute/genomes-in-the-cloud:2.3.1-1512499786"])
-  String? gatk_docker 
-  String gatk_image = select_first([gatk_docker, "broadinstitute/gatk:latest"])
-
-  call GenerateOutputMap {
-    input:
-      input_bam = input_bam,
-      disk_size = ceil(input_size) + additional_disk,
-      docker = gitc_image
+    Int additional_disk_size = 20
+    String gatk_docker = "broadinstitute/gatk:latest"
+    String gatk_path = "/gatk/gatk"
   }
-
+    Float input_size = size(input_bam, "GB")
+    
   call RevertSam {
     input:
       input_bam = input_bam,
-      output_map = GenerateOutputMap.output_map,
-      disk_size = ceil(input_size * 3) + additional_disk,
-      docker = gatk_image,
-      gatk_path = path2gatk
+      disk_size = ceil(input_size * 3) + additional_disk_size,
+      docker = gatk_docker,
+      gatk_path = gatk_path
   }
 
   scatter (unmapped_bam in RevertSam.unmapped_bams) {
@@ -64,9 +51,9 @@ workflow BamToUnmappedBams {
       input:
         input_bam = unmapped_bam,
         sorted_bam_name = output_basename + ".unmapped.bam",
-        disk_size = ceil(unmapped_bam_size * 6) + additional_disk,
-        docker = gatk_image,
-        gatk_path = path2gatk
+        disk_size = ceil(unmapped_bam_size * 6) + additional_disk_size,
+        docker = gatk_docker,
+        gatk_path = gatk_path
     }
   }
 
@@ -75,49 +62,27 @@ workflow BamToUnmappedBams {
   }
 }
 
-task GenerateOutputMap {
-  File input_bam
-  Int disk_size
-  
-  String docker
-
-  command {
-    set -e
-
-    samtools view -H ${input_bam} | grep @RG | cut -f2 | sed s/ID:// > readgroups.txt
-
-    echo -e "READ_GROUP_ID\tOUTPUT" > output_map.tsv
-
-    for rg in `cat readgroups.txt`; do
-      echo -e "$rg\t$rg.coord.sorted.unmapped.bam" >> output_map.tsv
-    done
-  }
-
-  runtime {
-    docker: docker
-    disks: "local-disk " + disk_size + " HDD"
-    preemptible: "3"
-    memory: "1 GB"
-  }
-  output {
-    File output_map = "output_map.tsv"
-  }
-}
-
 task RevertSam {
-  File input_bam
-  File output_map
-  Int disk_size
+  input {
+    #Command parameters
+    File input_bam
+    String gatk_path
 
-  String gatk_path
+    #Runtime parameters
+    Int disk_size
+    String docker
+    Int machine_mem_gb = 2
+    Int preemptible_attempts = 3
+  }
+    Int command_mem_gb = machine_mem_gb - 1    ####Needs to occur after machine_mem_gb is set 
 
-  String docker
-
-  command {
-    ${gatk_path} --java-options "-Xmx1000m" \
+  command { 
+    PWD=`pwd`
+ 
+    ${gatk_path} --java-options "-Xmx${command_mem_gb}g" \
     RevertSam \
     --INPUT ${input_bam} \
-    --OUTPUT_MAP ${output_map} \
+    --OUTPUT $PWD \
     --OUTPUT_BY_READGROUP true \
     --VALIDATION_STRINGENCY LENIENT \
     --ATTRIBUTE_TO_CLEAR FT \
@@ -127,7 +92,8 @@ task RevertSam {
   runtime {
     docker: docker
     disks: "local-disk " + disk_size + " HDD"
-    memory: "1200 MB"
+    memory: machine_mem_gb + " GB"
+    preemptible: preemptible_attempts
   }
   output {
     Array[File] unmapped_bams = glob("*.bam")
@@ -135,16 +101,21 @@ task RevertSam {
 }
 
 task SortSam {
-  File input_bam
-  String sorted_bam_name
-  Int disk_size
-
-  String gatk_path
-
-  String docker
+  input {
+    #Command parameters
+    File input_bam
+    String sorted_bam_name
+    #Runtime parameters
+    String gatk_path
+    Int disk_size
+    String docker
+    Int machine_mem_gb = 4
+    Int preemptible_attempts = 3
+  }
+    Int command_mem_gb = machine_mem_gb - 1    ####Needs to occur after machine_mem_gb is set 
 
   command {
-    ${gatk_path} --java-options "-Xmx3000m" \
+    ${gatk_path} --java-options "-Xmx${command_mem_gb}g" \
     SortSam \
     --INPUT ${input_bam} \
     --OUTPUT ${sorted_bam_name} \
@@ -154,8 +125,8 @@ task SortSam {
   runtime {
     docker: docker
     disks: "local-disk " + disk_size + " HDD"
-    memory: "3500 MB"
-    preemptible: 3
+    memory: machine_mem_gb + " GB"
+    preemptible: preemptible_attempts
   }
   output {
     File sorted_bam = "${sorted_bam_name}"

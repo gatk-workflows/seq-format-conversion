@@ -1,7 +1,4 @@
 {
-  "#UninterleaveFastqs.uninterleave_fqs.cpu": "Int? (optional)",
-  "#UninterleaveFastqs.uninterleave_fqs.memory": "Int? (optional)",
-  "#UninterleaveFastqs.uninterleave_fqs.disk": "Int? (optional)",
-  "UninterleaveFastqs.uninterleave_fqs.inputFastq": "gs://gatk-test-data/wgs_fastq/NA12878_20k/H06JUADXX130110.1.ATCACGAT.20k_interleaved.fastq"
+  "UninterleaveFastqs.uninterleave_fqs.input_fastq": "gs://gatk-test-data/wgs_fastq/NA12878_20k/H06JUADXX130110.1.ATCACGAT.20k_interleaved.fastq"
 }
 

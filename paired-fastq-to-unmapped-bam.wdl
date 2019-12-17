@@ -1,3 +1,4 @@
+version 1.0
 ##Copyright Broad Institute, 2018
 ## 
 ## This WDL converts paired FASTQ to uBAM and adds read group information 
@@ -28,25 +29,22 @@
 
 # WORKFLOW DEFINITION
 workflow ConvertPairedFastQsToUnmappedBamWf {
+  input {
+    Array[String] sample_name 
+    Array[String] fastq_1 
+    Array[String] fastq_2 
+    Array[String] readgroup_name 
+    Array[String] library_name 
+    Array[String] platform_unit 
+    Array[String] run_date 
+    Array[String] platform_name 
+    Array[String] sequencing_center 
 
-  Array[String] sample_name 
-  Array[String] fastq_1 
-  Array[String] fastq_2 
-  Array[String] readgroup_name 
-  Array[String] library_name 
-  Array[String] platform_unit 
-  Array[String] run_date 
-  Array[String] platform_name 
-  Array[String] sequencing_center 
+    String ubam_list_name
 
-  String ubam_list_name
-
-  String? gatk_docker_override
-  String gatk_docker = select_first([gatk_docker_override, "broadinstitute/gatk:latest"])
-  String? gatk_path_override
-  String gatk_path = select_first([gatk_path_override, "/gatk/gatk"])
-  Int? preemptible_attempts
-
+    String gatk_docker = "broadinstitute/gatk:latest"
+    String gatk_path = "/gatk/gatk"
+  }
   # Convert multiple pairs of input fastqs in parallel
   scatter (i in range(length(readgroup_name))) {
 
@@ -63,8 +61,7 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
         platform_name = platform_name[i],
         sequencing_center = sequencing_center[i],
         gatk_path = gatk_path,
-        docker = gatk_docker,
-        preemptible_attempts = preemptible_attempts
+        docker = gatk_docker
     }
   }
 
@@ -72,8 +69,7 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
   call CreateFoFN {
     input:
       array_of_files = PairedFastQsToUnmappedBAM.output_bam,
-      fofn_name = ubam_list_name,
-      docker = gatk_docker
+      fofn_name = ubam_list_name + ".ubam"
   }
 
   # Outputs that will be retained when execution is complete
@@ -87,23 +83,25 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
 
 # Convert a pair of FASTQs to uBAM
 task PairedFastQsToUnmappedBAM {
-  # Command parameters
-  String sample_name
-  File fastq_1
-  File fastq_2
-  String readgroup_name
-  String library_name
-  String platform_unit
-  String run_date
-  String platform_name
-  String sequencing_center
+  input {
+    # Command parameters
+    String sample_name
+    File fastq_1
+    File fastq_2
+    String readgroup_name
+    String library_name
+    String platform_unit
+    String run_date
+    String platform_name
+    String sequencing_center
+    String gatk_path
 
-  # Runtime parameters
-  Int? disk_space_gb
-  Int? machine_mem_gb
-  Int? preemptible_attempts
-  String docker
-  String gatk_path
+    # Runtime parameters
+    Int disk_space_gb = 100
+    Int machine_mem_gb = 10
+    Int preemptible_attempts = 3
+    String docker
+  }
 
   command {
     ${gatk_path} --java-options "-Xmx3000m" \
@@ -121,24 +119,23 @@ task PairedFastQsToUnmappedBAM {
   }
   runtime {
     docker: docker
-    memory: select_first([machine_mem_gb, 10]) + " GB"
+    memory: machine_mem_gb + " GB"
     cpu: "1"
-    disks: "local-disk " + select_first([disk_space_gb, 100]) + " HDD"
-    preemptible: select_first([preemptible_attempts, 3])
+    disks: "local-disk " + disk_space_gb + " HDD"
+    preemptible: preemptible_attempts
   }
   output {
     File output_bam = "${readgroup_name}.unmapped.bam"
   }
 }
 
+# Creats a file of file names of the uBAMs, which is a text file with each row having the path to the file.
 task CreateFoFN {
-  # Command parameters
-  Array[String] array_of_files
-  String fofn_name
-  
-  # Runtime parameters
-  String docker
-  
+  input {
+    # Command parameters
+    Array[String] array_of_files
+    String fofn_name
+  }
   command {
     mv ${write_lines(array_of_files)}  ${fofn_name}.list
   }
@@ -146,7 +143,7 @@ task CreateFoFN {
     File fofn_list = "${fofn_name}.list"
   }
   runtime {
-    docker: docker
+    docker: "ubuntu:latest"
     preemptible: 3
   }
 }

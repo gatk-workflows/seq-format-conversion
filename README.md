@@ -20,9 +20,6 @@ causes them to not validate  with Picard.
 ### paired-fastq-to-unmapped-bam :
 This WDL converts paired FASTQ to uBAM and adds read group information 
 
-*NOTE: paired-fastq-to-unmapped-bam-fc.wdl is a slightly modified version of the original to support users interested running on FireCloud. 
-As input this wdl takes a TSV with each row being a different readgroup and each column in the row being descriptors*
-
 #### Requirements/expectations 
 - Pair-end sequencing data in FASTQ format (one file per orientation)
 - The following metada descriptors per sample: 
@@ -57,7 +54,7 @@ This WDL takes in a single interleaved(R1+R2) FASTQ file and separates it into s
 - Samtools 1.3.1
 - Picard 2.8.3
 - Cromwell version support 
-  - Successfully tested on v32
+  - Successfully tested on v47
   - Does not work on versions < v23 due to output syntax
 
 ### Important Note :
