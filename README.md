@@ -57,6 +57,15 @@ GATK processing and analysis tools).
 #### Outputs 
 - Separate R1 and R2 FASTQ files (i.e. paired FASTQ)
 
+### interleaved-fastq-to-paired-fastq :
+This WDL takes in a single interleaved(R1+R2) FASTQ file and separates it into separate R1 and R2 FASTQ (i.e. paired FASTQ) files. Paired FASTQ files are the input format for the tool that generates unmapped BAMs (the format used in most GATK processing and analysis tools).
+
+#### Requirements/expectations 
+- Interleaved Fastq file
+
+#### Outputs 
+- Separate R1 and R2 FASTQ files (i.e. paired FASTQ)
+
 ### Software version requirements :
 - GATK4 or later
 - Samtools 1.3.1
