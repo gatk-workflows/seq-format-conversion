@@ -1,3 +1,4 @@
+version 1.0
 ## Copyright Broad Institute, 2017
 ## This script should convert a CRAM to SAM to BAM and output a BAM, BAM Index, and validation report to a Google bucket. If you'd like to do ## this on multiple CRAMS, create a sample set in the Data tab.  
 ## The reason this approach was chosen instead of converting CRAM to BAM directly using Samtools is because Samtools 1.3 produces incorrect 
@@ -25,34 +26,28 @@
 ##
 #WORKFLOW DEFINITION
 workflow CramToBamFlow {
-Int cram_to_bam_disk_size
-Int validate_sam_file_disk_size
-String cram_to_bam_mem_size
-String validate_sam_file_mem_size
+  input {
+    String gotc_docker = "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817"
+    Int preemptible_tries = 3
+  }
 
-String? gotc_docker_override
-String gotc_docker = select_first([gotc_docker_override, "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817"])
+  #converts CRAM to SAM to BAM and makes BAI
+  call CramToBamTask{
+    input:
+      docker_image = gotc_docker,
+      preemptible_tries = preemptible_tries
+  }
 
+  #validates Bam
+  call ValidateSamFile{
+    input:
+      input_bam = CramToBamTask.outputBam,
+      docker_image = gotc_docker,
+      preemptible_tries = preemptible_tries
+  }
 
-#converts CRAM to SAM to BAM and makes BAI
-call CramToBamTask{
-	input:
-	disk_size = cram_to_bam_disk_size,
-	mem_size = cram_to_bam_mem_size,
-        docker_image = gotc_docker	
-}
-
-#validates Bam
-call ValidateSamFile{
-	input:
-	input_bam = CramToBamTask.outputBam,
-        disk_size = validate_sam_file_disk_size,
-        mem_size = validate_sam_file_mem_size,
-        docker_image = gotc_docker	
-}
-
-#Outputs Bam, Bai, and validation report to the FireCloud data model
-output {
+  #Outputs Bam, Bai, and validation report to the FireCloud data model
+  output {
     File outputBam = CramToBamTask.outputBam
     File outputBai = CramToBamTask.outputBai
     File validation_report = ValidateSamFile.report
@@ -62,63 +57,70 @@ output {
 
 #Task Definitions
 task CramToBamTask {
+  input {
+    # Command parameters
+    File ref_fasta
+    File ref_fasta_index
+    File ref_dict
+    File input_cram
+    String sample_name
 
-File RefFasta
-File RefIndex
-File RefDict
-File InputCram
-#File InputCrai
-String SampleName
-Int disk_size
-String mem_size
-String docker_image
+    # Runtime parameters
+    Int addtional_disk_size = 20 
+    String machine_mem_size = 15
+    String docker_image
+    Int preemptible_tries
+  }
+    Float output_bam_size = size(input_cram, "GB") / 0.60
+    Float ref_size = size(ref_fasta, "GB") + size(ref_fasta_index, "GB") + size(ref_dict, "GB")
+    Int disk_size = ceil(size(input_cram, "GB") + output_bam_size + ref_size) + addtional_disk_size
 
 
-#Calls samtools view to do the conversion
-command {
-#Set -e and -o says if any command I run fails in this script, make sure to return a failure
-set -e
-set -o pipefail
+  #Calls samtools view to do the conversion
+  command {
+    set -eo pipefail
 
-samtools view -h -T ${RefFasta} ${InputCram} |
-samtools view -b -o ${SampleName}.bam -
-samtools index -b ${SampleName}.bam
-mv ${SampleName}.bam.bai ${SampleName}.bai
-}
+    samtools view -h -T ~{ref_fasta} ~{input_cram} |
+    samtools view -b -o ~{sample_name}.bam -
+    samtools index -b ~{sample_name}.bam
+    mv ~{sample_name}.bam.bai ~{sample_name}.bai
+  }
 
-#Run time attributes:
-#Use a docker with samtools. Set this up as a workspace attribute.
-#cpu of one because no multi-threading is required. This is also default, so don't need to specify.
-#disk_size should equal input size + output size + buffer
-
-runtime {
+  #Run time attributes:
+  #Use a docker with samtools. Set this up as a workspace attribute.
+  #cpu of one because no multi-threading is required. This is also default, so don't need to specify.
+  #disk_size should equal input size + output size + buffer
+  runtime {
     docker: docker_image
-    memory: mem_size
-    cpu: "1"
+    memory: machine_mem_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
-	}
+    preemptible: preemptible_tries
+  }
     
-#Outputs a BAM and BAI with the same sample name
-output {
-	File outputBam = "${SampleName}.bam"
-	File outputBai = "${SampleName}.bai"
-	}
+  #Outputs a BAM and BAI with the same sample name
+  output {
+    File outputBam = "~{sample_name}.bam"
+    File outputBai = "~{sample_name}.bai"
+  }
 }
 
 #Validates BAM output to ensure it wasn't corrupted during the file conversion
 task ValidateSamFile {
-  File input_bam
-  String output_name = basename(input_bam, ".bam") + ".validation_report"
-  Int disk_size
-  String mem_size
-  Int preemptible_tries
-  String docker_image
-
+  input {
+    File input_bam
+    Int addtional_disk_size = 10
+    Int machine_mem_size = 4
+    String docker_image
+    Int preemptible_tries
+  }
+    String output_name = basename(input_bam, ".bam") + ".validation_report"
+    Int disk_size = ceil(size(input_bam, "GB")) + addtional_disk_size
+    Int command_mem_size = machine_mem_size - 1
   command {
-    java -Xmx3000m -jar /usr/gitc/picard.jar \
+    java -Xmx~{command_mem_size}G -jar /usr/gitc/picard.jar \
       ValidateSamFile \
-      INPUT=${input_bam} \
-      OUTPUT=${output_name} \
+      INPUT=~{input_bam} \
+      OUTPUT=~{output_name} \
       MODE=SUMMARY \
       IS_BISULFITE_SEQUENCED=false 
   }
@@ -127,14 +129,14 @@ task ValidateSamFile {
   #Read more about return codes here: https://github.com/broadinstitute/cromwell#continueonreturncode
 		runtime {
     docker: docker_image
-    memory: mem_size
+    memory: machine_mem_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: preemptible_tries
     continueOnReturnCode: [0,1]
   }
   #A text file is generated that will list errors or warnings that apply. 
   output {
-    File report = "${output_name}"
+    File report = "~{output_name}"
   }
 }
 

@@ -1,24 +1,8 @@
 {
-  "##_COMMENT1": "INPUTS",
-  "CramToBamFlow.CramToBamTask.SampleName": "NA12878",
-  "CramToBamFlow.CramToBamTask.InputCram": "gs://gatk-test-data/wgs_cram/NA12878_20k_hg38/NA12878.cram",
+  "CramToBamFlow.CramToBamTask.sample_name": "NA12878",
+  "CramToBamFlow.CramToBamTask.input_cram": "gs://gatk-test-data/wgs_cram/NA12878_20k_hg38/NA12878.cram",
   
-  "##_COMMENT2": "REFERENCES",
-  "CramToBamFlow.CramToBamTask.RefDict": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dict",
-  "CramToBamFlow.CramToBamTask.RefFasta": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta",
-  "CramToBamFlow.CramToBamTask.RefIndex": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.fai",
-
-  "##_COMMENT3": "DOCKER",
-  "CramToBamFlow.gotc_docker_override": "String optional",
-
-  "##_COMMENT4": "DISK SIZE",
-  "CramToBamFlow.validate_sam_file_disk_size": "200",
-  "CramToBamFlow.cram_to_bam_disk_size": "200",
-  
-  "##_COMMENT3": "MEMORY",
-  "CramToBamFlow.validate_sam_file_mem_size": "3750 MB",
-  "CramToBamFlow.cram_to_bam_mem_size": "3.75 GB",
-
-  "##_COMMENT3": "PREEMPTIBLES",
-  "CramToBamFlow.ValidateSamFile.preemptible_tries": "3"
+  "CramToBamFlow.CramToBamTask.ref_dict": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dict",
+  "CramToBamFlow.CramToBamTask.ref_fasta": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta",
+  "CramToBamFlow.CramToBamTask.ref_fasta_index": "gs://genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.fai"
 }
