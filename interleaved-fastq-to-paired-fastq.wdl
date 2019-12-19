@@ -30,9 +30,9 @@ task uninterleave_fqs {
     String r2_name = basename(input_fastq, ".fastq") + "_reads_2.fastq"
   
   command {
-    cat ${input_fastq} | paste - - - - - - - -  | \
-    tee >(cut -f 1-4 | tr "\t" "\n" > ${r1_name}) | \
-    cut -f 5-8 | tr "\t" "\n" > ${r2_name}
+    cat ~{input_fastq} | paste - - - - - - - -  | \
+    tee >(cut -f 1-4 | tr "\t" "\n" > ~{r1_name}) | \
+    cut -f 5-8 | tr "\t" "\n" > ~{r2_name}
   }
 
   runtime {
@@ -42,7 +42,7 @@ task uninterleave_fqs {
   }
 
   output {
-    File r1_fastq = "${r1_name}"
-    File r2_fastq = "${r2_name}"
+    File r1_fastq = "~{r1_name}"
+    File r2_fastq = "~{r2_name}"
   }
 }

@@ -80,10 +80,10 @@ task CramToBamTask {
   command {
     set -eo pipefail
 
-    samtools view -h -T ${ref_fasta} ${input_cram} |
-    samtools view -b -o ${sample_name}.bam -
-    samtools index -b ${sample_name}.bam
-    mv ${sample_name}.bam.bai ${sample_name}.bai
+    samtools view -h -T ~{ref_fasta} ~{input_cram} |
+    samtools view -b -o ~{sample_name}.bam -
+    samtools index -b ~{sample_name}.bam
+    mv ~{sample_name}.bam.bai ~{sample_name}.bai
   }
 
   #Run time attributes:
@@ -99,8 +99,8 @@ task CramToBamTask {
     
   #Outputs a BAM and BAI with the same sample name
   output {
-    File outputBam = "${sample_name}.bam"
-    File outputBai = "${sample_name}.bai"
+    File outputBam = "~{sample_name}.bam"
+    File outputBai = "~{sample_name}.bai"
   }
 }
 
@@ -117,10 +117,10 @@ task ValidateSamFile {
     Int disk_size = ceil(size(input_bam, "GB")) + addtional_disk_size
     Int command_mem_size = machine_mem_size - 1
   command {
-    java -Xmx${command_mem_size}G -jar /usr/gitc/picard.jar \
+    java -Xmx~{command_mem_size}G -jar /usr/gitc/picard.jar \
       ValidateSamFile \
-      INPUT=${input_bam} \
-      OUTPUT=${output_name} \
+      INPUT=~{input_bam} \
+      OUTPUT=~{output_name} \
       MODE=SUMMARY \
       IS_BISULFITE_SEQUENCED=false 
   }
@@ -136,7 +136,7 @@ task ValidateSamFile {
   }
   #A text file is generated that will list errors or warnings that apply. 
   output {
-    File report = "${output_name}"
+    File report = "~{output_name}"
   }
 }
 

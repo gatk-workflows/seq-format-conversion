@@ -104,18 +104,18 @@ task PairedFastQsToUnmappedBAM {
   }
 
   command {
-    ${gatk_path} --java-options "-Xmx3000m" \
+    ~{gatk_path} --java-options "-Xmx3000m" \
     FastqToSam \
-    --FASTQ ${fastq_1} \
-    --FASTQ2 ${fastq_2} \
-    --OUTPUT ${readgroup_name}.unmapped.bam \
-    --READ_GROUP_NAME ${readgroup_name} \
-    --SAMPLE_NAME ${sample_name} \
-    --LIBRARY_NAME ${library_name} \
-    --PLATFORM_UNIT ${platform_unit} \
-    --RUN_DATE ${run_date} \
-    --PLATFORM ${platform_name} \
-    --SEQUENCING_CENTER ${sequencing_center} 
+    --FASTQ ~{fastq_1} \
+    --FASTQ2 ~{fastq_2} \
+    --OUTPUT ~{readgroup_name}.unmapped.bam \
+    --READ_GROUP_NAME ~{readgroup_name} \
+    --SAMPLE_NAME ~{sample_name} \
+    --LIBRARY_NAME ~{library_name} \
+    --PLATFORM_UNIT ~{platform_unit} \
+    --RUN_DATE ~{run_date} \
+    --PLATFORM ~{platform_name} \
+    --SEQUENCING_CENTER ~{sequencing_center} 
   }
   runtime {
     docker: docker
@@ -125,7 +125,7 @@ task PairedFastQsToUnmappedBAM {
     preemptible: preemptible_attempts
   }
   output {
-    File output_bam = "${readgroup_name}.unmapped.bam"
+    File output_bam = "~{readgroup_name}.unmapped.bam"
   }
 }
 
@@ -137,10 +137,10 @@ task CreateFoFN {
     String fofn_name
   }
   command {
-    mv ${write_lines(array_of_files)}  ${fofn_name}.list
+    mv ~{write_lines(array_of_files)}  ~{fofn_name}.list
   }
   output {
-    File fofn_list = "${fofn_name}.list"
+    File fofn_list = "~{fofn_name}.list"
   }
   runtime {
     docker: "ubuntu:latest"

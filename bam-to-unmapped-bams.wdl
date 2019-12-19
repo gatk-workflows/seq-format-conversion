@@ -77,12 +77,11 @@ task RevertSam {
     Int command_mem_gb = machine_mem_gb - 1    ####Needs to occur after machine_mem_gb is set 
 
   command { 
-    PWD=`pwd`
  
-    ${gatk_path} --java-options "-Xmx${command_mem_gb}g" \
+    ~{gatk_path} --java-options "-Xmx~{command_mem_gb}g" \
     RevertSam \
-    --INPUT ${input_bam} \
-    --OUTPUT $PWD \
+    --INPUT ~{input_bam} \
+    --OUTPUT ./ \
     --OUTPUT_BY_READGROUP true \
     --VALIDATION_STRINGENCY LENIENT \
     --ATTRIBUTE_TO_CLEAR FT \
@@ -115,10 +114,10 @@ task SortSam {
     Int command_mem_gb = machine_mem_gb - 1    ####Needs to occur after machine_mem_gb is set 
 
   command {
-    ${gatk_path} --java-options "-Xmx${command_mem_gb}g" \
+    ~{gatk_path} --java-options "-Xmx~{command_mem_gb}g" \
     SortSam \
-    --INPUT ${input_bam} \
-    --OUTPUT ${sorted_bam_name} \
+    --INPUT ~{input_bam} \
+    --OUTPUT ~{sorted_bam_name} \
     --SORT_ORDER queryname \
     --MAX_RECORDS_IN_RAM 1000000
   }
@@ -129,7 +128,7 @@ task SortSam {
     preemptible: preemptible_attempts
   }
   output {
-    File sorted_bam = "${sorted_bam_name}"
+    File sorted_bam = "~{sorted_bam_name}"
   }
 }
 
