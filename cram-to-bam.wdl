@@ -39,11 +39,11 @@ workflow CramToBamFlow {
   #converts CRAM to SAM to BAM and makes BAI
   call CramToBamTask{
     input:
-      ref_fasta = ref_fasta
-      ref_fasta_index = ref_fasta_index
-      ref_dict = ref_dict
-      input_cram = input_cram
-      sample_name = sample_name
+      ref_fasta = ref_fasta,
+      ref_fasta_index = ref_fasta_index,
+      ref_dict = ref_dict,
+      input_cram = input_cram,
+      sample_name = sample_name,
       docker_image = gotc_docker,
       preemptible_tries = preemptible_tries
   }
