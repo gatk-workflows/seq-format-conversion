@@ -10,7 +10,7 @@ version 1.0
 ## - Sorted Unmapped BAMs
 ##
 ## Cromwell version support
-## - Successfully tested on v33
+## - Successfully tested on v47
 ## - Does not work on versions < v23 due to output syntax
 ##
 ## Runtime parameters are optimized for Broad's Google Cloud Platform implementation. 

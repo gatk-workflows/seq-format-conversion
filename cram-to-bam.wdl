@@ -17,7 +17,7 @@ version 1.0
 ## BGZIP_VER=1.3
 ## SVTOOLKIT_VER=2.00-1650
 ## It was tested pulling the HG38 reference Fasta and Fai.
-## Successfully tested on Cromwell version 28. Does not work on versions < v23 due to output syntax 
+## Successfully tested on Cromwell version 47. Does not work on versions < v23 due to output syntax 
 ## Runtime parameters are optimized for Broad's Google Cloud Platform implementation. 
 ##
 ## LICENSING : This script is released under the WDL source code license (BSD-3) (see LICENSE in https://github.com/broadinstitute/wdl). 
@@ -27,6 +27,11 @@ version 1.0
 #WORKFLOW DEFINITION
 workflow CramToBamFlow {
   input {
+    File ref_fasta
+    File ref_fasta_index
+    File ref_dict
+    File input_cram
+    String sample_name
     String gotc_docker = "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817"
     Int preemptible_tries = 3
   }
@@ -34,6 +39,11 @@ workflow CramToBamFlow {
   #converts CRAM to SAM to BAM and makes BAI
   call CramToBamTask{
     input:
+      ref_fasta = ref_fasta,
+      ref_fasta_index = ref_fasta_index,
+      ref_dict = ref_dict,
+      input_cram = input_cram,
+      sample_name = sample_name,
       docker_image = gotc_docker,
       preemptible_tries = preemptible_tries
   }

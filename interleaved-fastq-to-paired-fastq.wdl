@@ -13,8 +13,14 @@ version 1.0
 ##################
 
 workflow UninterleaveFastqs {
+  input {
+    File input_fastq
+  }
 
-  call uninterleave_fqs
+  call uninterleave_fqs {
+    input: 
+      input_fastq = input_fastq
+  }
 
 }
 
