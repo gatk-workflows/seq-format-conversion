@@ -1,4 +1,4 @@
 {
-  "UninterleaveFastqs.uninterleave_fqs.input_fastq": "gs://gatk-test-data/wgs_fastq/NA12878_20k/H06JUADXX130110.1.ATCACGAT.20k_interleaved.fastq"
+  "UninterleaveFastqs.input_fastq": "gs://gatk-test-data/wgs_fastq/NA12878_20k/H06JUADXX130110.1.ATCACGAT.20k_interleaved.fastq"
 }
 
