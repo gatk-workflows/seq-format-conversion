@@ -17,7 +17,6 @@ workflow UninterleaveFastqs {
     File input_fastq
   }
 
-
   call uninterleave_fqs {
     input: 
       input_fastq = input_fastq
