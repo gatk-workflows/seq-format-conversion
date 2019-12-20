@@ -17,7 +17,7 @@ version 1.0
 ## BGZIP_VER=1.3
 ## SVTOOLKIT_VER=2.00-1650
 ## It was tested pulling the HG38 reference Fasta and Fai.
-## Successfully tested on Cromwell version 28. Does not work on versions < v23 due to output syntax 
+## Successfully tested on Cromwell version 47. Does not work on versions < v23 due to output syntax 
 ## Runtime parameters are optimized for Broad's Google Cloud Platform implementation. 
 ##
 ## LICENSING : This script is released under the WDL source code license (BSD-3) (see LICENSE in https://github.com/broadinstitute/wdl). 
