@@ -32,8 +32,7 @@ This WDL converts paired FASTQ to uBAM and adds read group information
   - sequecing_center
   
 #### Outputs 
-- Set of unmapped BAMs, one per read group
-- File containing a list of the generated unmapped BAMs 
+- Unmapped BAM 
 
 ### bam-to-unmapped-bams :
 This WDL converts BAM  to unmapped BAMs
