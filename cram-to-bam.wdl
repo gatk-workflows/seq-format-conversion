@@ -77,7 +77,7 @@ task CramToBamTask {
 
     # Runtime parameters
     Int addtional_disk_size = 20 
-    String machine_mem_size = 15
+    Int machine_mem_size = 15
     String docker_image
     Int preemptible_tries
   }
