@@ -69,8 +69,7 @@ This WDL takes in a single interleaved(R1+R2) FASTQ file and separates it into s
 - Samtools 1.3.1
 - Picard 2.8.3
 - Cromwell version support 
-  - Successfully tested on v47
-  - Does not work on versions < v23 due to output syntax
+  - Successfully tested on v50
 
 ### Important Notes :
 - Runtime parameters are optimized for Broad's Google Cloud Platform implementation.
