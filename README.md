@@ -3,12 +3,11 @@ Workflows for converting between sequence data formats
 
 ### cram-to-bam :
 This script should convert a CRAM to SAM to BAM and output a BAM, BAM Index, 
-and validation report to a Google bucket. If you'd like to do this on multiple CRAMS, 
-create a sample set in the Data tab.  
+and validation report to a Google bucket.
 The reason this approach was chosen instead of converting CRAM to BAM directly 
 using Samtools is because Samtools 1.3 produces incorrect bins due to an old version of htslib 
 included in the package. Samtools versions 1.4 & 1.5 have an NM issue that 
-causes them to not validate  with Picard. 
+causes them to not validate with Picard. 
 
 #### Requirements/expectations
 - Cram file 
