@@ -1,0 +1,22 @@
+version: 1.2
+workflows:
+   - name: Paired-FASTQ-to-Unmapped-BAM
+     subclass: WDL
+     primaryDescriptorPath: /paired-fastq-to-unmapped-bam.wdl
+     testParameterFiles:
+     -  /paired-fastq-to-unmapped-bam.inputs.json
+   - name: BAM-to-Unmapped-BAM
+     subclass: WDL
+     primaryDescriptorPath: /bam-to-unmapped-bams.wdl
+     testParameterFiles:
+     -  /bam-to-unmapped-bams.inputs.json
+   - name: CRAM-to-BAM
+     subclass: WDL
+     primaryDescriptorPath: /cram-to-bam.wdl
+     testParameterFiles:
+     -  /cram-to-bam.inputs.json
+   - name: interleaved-fastq-to-paired-fastq
+     subclass: WDL
+     primaryDescriptorPath: /interleaved-fastq-to-paired-fastq.wdl
+     testParameterFiles:
+     -  /interleaved-fastq-to-paired-fastq.inputs.json
