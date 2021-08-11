@@ -50,6 +50,10 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
 
     String gatk_docker = "broadinstitute/gatk:latest"
     String gatk_path = "/gatk/gatk"
+    
+    # Sometimes the output is larger than the input, or a task can spill to disk.
+    # In these cases we need to account for the input (1) and the output (1.5) or the input(1), the output(1), and spillage (.5).
+    Float disk_multiplier = 2.5
   }
 
     String ubam_list_name = sample_name
@@ -67,7 +71,8 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
       platform_name = platform_name,
       sequencing_center = sequencing_center,
       gatk_path = gatk_path,
-      docker = gatk_docker
+      docker = gatk_docker,
+      disk_multiplier = disk_multiplier
   }
 
   #Create a file with the generated ubam
@@ -108,9 +113,11 @@ task PairedFastQsToUnmappedBAM {
     Int machine_mem_gb = 7
     Int preemptible_attempts = 3
     String docker
+    Float disk_multiplier
   }
     Int command_mem_gb = machine_mem_gb - 1
-    Int disk_space_gb = ceil((size(fastq_1, "GB") + size(fastq_2, "GB")) * 2 ) + addtional_disk_space_gb
+    Float fastq_size = size(fastq_1, "GB") + size(fastq_2, "GB")
+    Int disk_space_gb = ceil(fastq_size + (fastq_size * disk_multiplier ) + addtional_disk_space_gb)
   command {
     ~{gatk_path} --java-options "-Xmx~{command_mem_gb}g" \
     FastqToSam \
