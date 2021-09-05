@@ -46,7 +46,7 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
     String platform_name 
     String sequencing_center 
 
-    Boolean make_fofn = false
+    Boolean make_fofn = true
 
     String gatk_docker = "broadinstitute/gatk:latest"
     String gatk_path = "/gatk/gatk"
